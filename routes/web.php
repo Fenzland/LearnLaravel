@@ -12,3 +12,4 @@
 */
 
 Route::get('/', function () { return view('welcome'); });
+Route::get('/from-request-to-response', function () { return view('from-request-to-response'); });
