@@ -28,7 +28,9 @@
 		><li
 			><h3>from Request to Response</h3
 			><p>As a web framework, the main work of Laravel is to accept a Request then to send a Response.</p
-			><a href="/from-request-to-response">Read more &gt;&gt;</a
+			><p
+				><a href="/from-request-to-response">Read more &gt;&gt;</a
+			></p
 		></li
 	></ul
 @endsection

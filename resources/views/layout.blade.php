@@ -6,7 +6,7 @@
 		><title>@yield('title', 'Learn Laravel')</title
 		><!-- Fonts 
 		--><link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet"
-		><link href="https://fonts.googleapis.com/css?family=Fira%20Code:200" rel="stylesheet"
+		><link href="https://fonts.googleapis.com/css?family=Fira%20Code:400" rel="stylesheet"
 		><!-- Styles 
 		--><style
 		>
@@ -14,6 +14,8 @@
 			{
 				--theme-color-hue: 3;
 				--theme-color: hsla(var(--theme-color-hue),100%,56%,1); 
+				--active-color-hue: 208;
+				--active-color: hsla(var(--active-color-hue),100%,50%,1);
 				--base-color: hsla(200,6%,41%,1);
 				
 				font-family: 'Nunito', sans-serif;
@@ -27,9 +29,50 @@
 				font-family: 'Fira Code', monospace;
 			}
 			
+			a:link
+			{
+				--color-transition: 250ms;
+				
+				transition:
+					color var(--color-transition)
+					,
+					text-decoration-color var(--color-transition)
+				;
+			}
+			
+			a:link
+			{
+				color: var(--active-color);
+				text-decoration-color: hsla(var(--active-color-hue),100%,50%,0.5);
+			}
+			
+			a:visited:not(:active)
+			{
+				color: var(--active-color);
+				text-decoration-color: hsla(var(--active-color-hue),100%,50%,0.25);
+			}
+			
+			a:link:active
+			{
+				text-decoration-color: hsla(var(--theme-color-hue),100%,50%,0.5);
+				color: var(--theme-color);
+			}
+			
+			a:link:not(:focus):not(:hover):not(:active)
+			{
+				text-decoration-color: hsla(var(--active-color-hue),100%,50%,0);
+				--color-transition: 1000ms;
+			}
+			
 			svg svg
 			{
 				overflow: visible;
+			}
+			
+			::selection
+			{
+				background-color: transparent;
+				text-shadow: 0 0 1px, 0 0 2px;
 			}
 			
 			:root>body
@@ -94,7 +137,7 @@
 				text-align: center;
 			}
 			
-			p code
+			article>p code
 			{
 				font-size: 0.875rem;
 				padding: 0.125em;
@@ -103,9 +146,16 @@
 				background-color: hsla(var(--theme-color-hue),100%,87.5%,0.25);
 			}
 			
+			article>figure
+			{
+				text-align: center;
+			}
+			
 			code-mirror:not(:defined)
 			{
 				white-space: pre;
+				font-family: 'Fira Code', monospace;
+				font-size: 75%;
 			}
 			
 			@yield('styles')
