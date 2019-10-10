@@ -13,3 +13,4 @@
 
 Route::get('/', function () { return view('welcome'); });
 Route::get('/from-request-to-response', function () { return view('from-request-to-response'); });
+Route::get('/first-guide', function () { return view('first-guide'); });
