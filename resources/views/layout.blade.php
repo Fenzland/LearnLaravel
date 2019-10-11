@@ -20,8 +20,10 @@
 				
 				font-family: 'Nunito', sans-serif;
 				font-weight: 200;
-				color: var(--base-color);
 				height: 100%;
+				line-height: 2;
+				
+				color: var(--base-color);
 			}
 			
 			code
