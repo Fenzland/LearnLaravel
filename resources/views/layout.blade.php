@@ -162,6 +162,7 @@
 			
 			@yield('styles')
 		</style
+		><script type="module" src="/vendor/code-mirror/component.js"></script
 	></head
 	><body
 		><header
