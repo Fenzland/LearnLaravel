@@ -128,10 +128,11 @@
 			{
 				width: 100vmin;
 				min-width: 60vw;
+				max-width: calc( 100vw - 2rem );
 				margin-left: auto;
 				margin-right: auto;
-				padding-left: 1em;
-				padding-right: 1em;
+				padding-left: 1rem;
+				padding-right: 1rem;
 			}
 			
 			:root>body>footer
