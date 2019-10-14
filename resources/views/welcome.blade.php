@@ -39,5 +39,12 @@
 				><a href="/from-request-to-response">Read more &gt;&gt;</a
 			></p
 		></li
+		><li
+			><h3>IoC Container</h3
+			><p>In previous article, we've see that the magician <code>$app</code> produced the <code>$kernel</code> out of gloved hands. Let's reveal the secrets of the magic.</p
+			><p
+				><a href="/ioc-container">Read more &gt;&gt;</a
+			></p
+		></li
 	></ul
 @endsection
