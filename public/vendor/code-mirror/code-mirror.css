@@ -37,7 +37,8 @@
 	font-size: 0.875rem;
 	
 	font-style: italic;
-	color: hsla(0,0%,87.5%,1);
+	color: hsla(0,0%,81.25%,1);
+	text-shadow: 1px 1px 0 hsla(0,0%,100%,1);
 }
 
 /* BASICS */
