@@ -24,7 +24,7 @@ export default class CodeMirrorElement extends HTMLElement
 		const filename= this.getAttribute( 'filename', );
 		const filenameTag= document.createElement( 'span', );
 		filenameTag.classList.add( 'filename-tag', );
-		filenameTag.appendChild( document.createTextNode( filename, ), )
+		filenameTag.appendChild( document.createTextNode( filename|| '', ), )
 		
 		tags.appendChild( filenameTag, );
 		
@@ -85,7 +85,7 @@ export default class CodeMirrorElement extends HTMLElement
 	
 	attributeFilenameChangedCallback( filename, )
 	{
-		this.#document.querySelector( '.filename-tag', ).firstChild.data= filename;
+		this.#document.querySelector( '.filename-tag', ).firstChild.data= filename|| '';
 	}
 	
 	attributeReadonlyChangedCallback( readonly, )
