@@ -174,7 +174,7 @@
 		><main
 			@yield('main')
 		></main
-		><footer>&copy;Fenzland</footer
+		><footer>&copy;{{$author}}</footer
 	></body
 ></html
 >

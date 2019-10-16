@@ -13,7 +13,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        // Don't add anything here, they will become noodles.
     }
 
     /**
@@ -23,6 +23,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        // Don't add anything here, they will become noodles.
     }
 }

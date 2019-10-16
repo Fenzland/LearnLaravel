@@ -151,8 +151,10 @@ return [
         Illuminate\Foundation\Providers\FoundationServiceProvider::class,
         Illuminate\Hashing\HashServiceProvider::class,
         Illuminate\Mail\MailServiceProvider::class,
-        Illuminate\Notifications\NotificationServiceProvider::class,
-        Illuminate\Pagination\PaginationServiceProvider::class,
+        // Illuminate\Notifications\NotificationServiceProvider::class,
+        App\Providers\NotificationServiceProvider::class,
+        // Illuminate\Pagination\PaginationServiceProvider::class,
+        App\Providers\PaginationServiceProvider::class,
         Illuminate\Pipeline\PipelineServiceProvider::class,
         Illuminate\Queue\QueueServiceProvider::class,
         Illuminate\Redis\RedisServiceProvider::class,
@@ -169,7 +171,8 @@ return [
         /*
          * Application Service Providers...
          */
-        App\Providers\AppServiceProvider::class,
+        // App\Providers\AppServiceProvider::class,
+        App\Providers\ViewSharingServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
