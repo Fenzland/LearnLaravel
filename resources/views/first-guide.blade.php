@@ -9,6 +9,8 @@
 	So, please prepare to read the source codes of Laravel. Trust me, they are extremely beautiful. 
 	You will enjoy them and learn a lot from them.</p
 	><p>Besides, we will add some best practices for you. If you are face to the same situation, that will be helpful.</p
+	><p>This project itself is a live example. 
+	You can get it from <a href="https://github.com/Fenzland/LearnLaravel">GitHub</a> and find the best practices that we talk about in it.</p
 	><p>We also make a summing up at the last for each article. We'll list the related knowledge points.
 	You can make deeper learning with them by reading source code or official documentations. </p
 	><p>If you are completely novice of Laravel, maybe you need to read <a href="https://laravel.com/docs">Official Documentations</a> first.
