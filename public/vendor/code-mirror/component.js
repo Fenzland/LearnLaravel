@@ -66,7 +66,7 @@ export default class CodeMirrorElement extends HTMLElement
 	
 	static get observedAttributes()
 	{
-		return [ 'language', 'filename', 'readonly', ];
+		return [ 'language', 'filename', 'readonly', 'width', 'height', ];
 	}
 	
 	attributeChangedCallback( attribute, oldValue, newValue, )
@@ -91,6 +91,22 @@ export default class CodeMirrorElement extends HTMLElement
 	attributeReadonlyChangedCallback( readonly, )
 	{
 		this.#codeMirror.setOption( 'readOnly', readonly !== null, );
+	}
+	
+	attributeWidthChangedCallback( width, )
+	{
+		if( width === null )
+			this.#codeMirror.setSize( 'auto', null, );
+		
+		this.#codeMirror.setSize( width, null, );
+	}
+	
+	attributeHeightChangedCallback( height, )
+	{
+		if( height === null )
+			this.#codeMirror.setSize( null, 'auto', );
+		
+		this.#codeMirror.setSize( null, height, );
 	}
 }
 
