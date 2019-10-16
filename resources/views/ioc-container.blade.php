@@ -280,8 +280,8 @@
 			    return $bar;
 			});
 		</code-mirror
-		><p>At last, let's talk about the IoC. IoC is short for <i>Inversion of Control</i>. 
-		It's made up with Dependence Inversion Principle (DIP) and Dependency injection (DI). 
+		><p>Now, let's talk about the IoC. IoC is short for <i>Inversion of Control</i>. 
+		It's made up with Dependence Inversion Principle (DIP) and Dependency Injection (DI). 
 		The DIP says: a module should not depend on another module, but both them should depend on abstraction. 
 		For example:</p
 		><code-mirror
@@ -346,6 +346,104 @@
 		><p>Now, you can make creative works in <code>MyRouter</code>. If you register <code>MyRouter</code> in <code>bootstrap/app.php</code>, 
 		you will find your routes will not work, and all request will responded with 404. That's some reason about the service providers. 
 		We will talk about this on next article. </p
+		><p>DI is so powerful, we can expect it's not only for constructing. By searching <code>public function</code> in the container class, 
+		we can find to methods that official documentation not talk about: <code>call()</code> and <code>wrap()</code>. </p
+		><code-mirror
+			language="PHP"
+			readonly="readonly"
+			filename="vendor/laravel/framework/src/Illuminate/Container/Container.php"
+		>
+			/**
+			 * Call the given Closure / class@method and inject its dependencies.
+			 *
+			 * @param  callable|string  $callback
+			 * @param  array  $parameters
+			 * @return mixed
+			 */
+			public function call($callback, array $parameters = [] )
+			
+			/**
+			 * Wrap the given closure such that its dependencies will be injected when executed.
+			 *
+			 * @param  \Closure  $callback
+			 * @param  array  $parameters
+			 * @return \Closure
+			 */
+			public function wrap(Closure $callback, array $parameters = [])
+			{
+			    return function () use ($callback, $parameters) {
+			        return $this->call($callback, $parameters);
+			    };
+			}
+		</code-mirror
+		><p>Here is some examples for <code>call()</code>: </p
+		><code-mirror
+			language="PHP"
+			readonly="readonly"
+		>
+			$container->call(function (Illuminate\Contracts\Http\Kernel $kernel) {
+				dump( $kernel );
+			});
+		</code-mirror
+		><code-mirror
+			language="PHP"
+			readonly="readonly"
+		>
+			function function_name(Illuminate\Contracts\Http\Kernel $kernel)
+			{
+				dump( $kernel );
+			}
+			
+			$app->call( 'function_name' );
+		</code-mirror
+		><code-mirror
+			language="PHP"
+			readonly="readonly"
+		>
+			class ClassName
+			{
+				public static function methodName(Illuminate\Contracts\Http\Kernel $kernel)
+				{
+					dump( $kernel );
+				}
+			}
+			
+			$app->call( [ClassName::class, 'methodName'] );
+			$app->call( 'ClassName::methodName' );
+			$app->call( 'ClassName@methodName' ); // not standard, not recommended
+		</code-mirror
+		><code-mirror
+			language="PHP"
+			readonly="readonly"
+		>
+			class ClassName
+			{
+				public static function methodName(Illuminate\Contracts\Http\Kernel $kernel)
+				{
+					dump( $kernel );
+				}
+			}
+			
+			$app->call( [ClassName::class, 'methodName'] );
+			$app->call( 'ClassName::methodName' );
+		</code-mirror
+		><code-mirror
+			language="PHP"
+			readonly="readonly"
+		>
+			class ClassName
+			{
+				public function methodName(Illuminate\Contracts\Http\Kernel $kernel)
+				{
+					dump( $kernel );
+				}
+			}
+			
+			$app->call( [new ClassName(), 'methodName'] );
+			$app->call( 'ClassName@methodName' ); // for non-static method, container will instantiate the class automatically.
+		</code-mirror
+		><p>The method <code>wrap()</code> however, returns a anonymous function for calling later or higher order functions. 
+		unfortunately, the <code>wrap()</code> is not as powerful as <code>call()</code> because of a improper type hint. </p
 		><h3>Summing up</h3
 		><p>In this article, we dig into Container, find out how it works. Then learn what is IoC, DIP and DI, know why the container designed like this. 
 		And show a example about how to extend a framework module with the container. </p
