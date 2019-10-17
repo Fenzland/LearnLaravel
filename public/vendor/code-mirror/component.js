@@ -1,25 +1,29 @@
 import 'https://better-js.fenz.land/index.js';
 import CodeMirror from './code-mirror.js';
+import StyleLoader from './StyleLoader.js';
 
-const styleSheet= new CSSStyleSheet();
+const styleLoader= new StyleLoader(
+	import.meta.url.replace( /\/[^/]+(?:\?.*)?(?:#.*)?$/, '/code-mirror.css' ),
+);
 
 export default class CodeMirrorElement extends HTMLElement
 {
-	#document;
+	// POLYFILL for not supporting properties
+	// #document;
 	
-	#codeMirror;
+	// #codeMirror;
 	
 	constructor()
 	{
 		super();
 		
-		this.#document= this.attachShadow( { mode: 'open', }, );
-		this.#document.adoptedStyleSheets= [ styleSheet, ];
+		this._document= this.attachShadow( { mode: 'open', }, );
+		styleLoader.apply( this._document, );
 		
 		const tags= document.createElement( 'div', );
 		tags.classList.add( 'tags', );
 		
-		this.#document.appendChild( tags, );
+		this._document.appendChild( tags, );
 		
 		const filename= this.getAttribute( 'filename', );
 		const filenameTag= document.createElement( 'span', );
@@ -37,7 +41,7 @@ export default class CodeMirrorElement extends HTMLElement
 		
 		const content= unifyCode( this.childNodes.mapAndFilter( node=> node instanceof Text&& node.data, ).implode(), );
 		
-		this.#codeMirror= new CodeMirror( this.#document, {
+		this._codeMirror= new CodeMirror( this._document, {
 			value: content,
 			mode: langage,
 			indentUnit: 4,
@@ -51,7 +55,7 @@ export default class CodeMirrorElement extends HTMLElement
 	{
 		const content= unifyCode( this.childNodes.mapAndFilter( node=> node instanceof Text&& node.data, ).implode(), );
 		
-		this.#codeMirror.setValue( content, );
+		this._codeMirror.setValue( content, );
 	}
 	
 	disconnectedCallback()
@@ -79,45 +83,40 @@ export default class CodeMirrorElement extends HTMLElement
 	
 	attributeLanguageChangedCallback( language, )
 	{
-		this.#codeMirror.setOption( 'mode', language, );
-		this.#document.querySelector( '.language-tag', ).firstChild.data= language;
+		this._codeMirror.setOption( 'mode', language, );
+		this._document.querySelector( '.language-tag', ).firstChild.data= language;
 	}
 	
 	attributeFilenameChangedCallback( filename, )
 	{
-		this.#document.querySelector( '.filename-tag', ).firstChild.data= filename|| '';
+		this._document.querySelector( '.filename-tag', ).firstChild.data= filename|| '';
 	}
 	
 	attributeReadonlyChangedCallback( readonly, )
 	{
-		this.#codeMirror.setOption( 'readOnly', readonly !== null, );
+		this._codeMirror.setOption( 'readOnly', readonly !== null, );
 	}
 	
 	attributeWidthChangedCallback( width, )
 	{
 		if( width === null )
-			this.#codeMirror.setSize( 'auto', null, );
+			this._codeMirror.setSize( 'auto', null, );
 		
-		this.#codeMirror.setSize( width, null, );
+		this._codeMirror.setSize( width, null, );
 	}
 	
 	attributeHeightChangedCallback( height, )
 	{
 		if( height === null )
-			this.#codeMirror.setSize( null, 'auto', );
+			this._codeMirror.setSize( null, 'auto', );
 		
-		this.#codeMirror.setSize( null, height, );
+		this._codeMirror.setSize( null, height, );
 	}
 }
 
-(async()=> {
-	const CSSUrl= import.meta.url.replace( /\/[^/]+(?:\?.*)?(?:#.*)?$/, '/code-mirror.css' );
-	const $CSSCode= fetch( CSSUrl, ).then( response=> response.text(), )
-	
-	await styleSheet.replace( await $CSSCode, );
-	
+styleLoader.then( ()=> {
 	customElements.define( 'code-mirror', CodeMirrorElement, );
-})();
+}, );
 
 function unifyCode( text, )
 {

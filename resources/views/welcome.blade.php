@@ -11,6 +11,7 @@
 		font-size: 4rem;
 	}
 	
+	/* POLYFILL for not supporting ::marker */
 	:root>body>main>ul.post-list>li
 	{
 		color: var(--theme-color);
@@ -20,6 +21,12 @@
 	{
 		color: var(--base-color);
 	}
+	/*
+	:root>body>main>ul.post-list>li::marker
+	{
+		color: var(--theme-color);
+	}
+	*/
 	
 @endsection
 
