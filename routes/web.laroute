@@ -1,0 +1,6 @@
+: >web &App\Http\Controllers
+	GET / welcome
+		>>Home@welcome
+	GET /{page} page
+		?page \w+(-\w+)+
+		>>Pages@page
