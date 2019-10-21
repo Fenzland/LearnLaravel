@@ -11,8 +11,5 @@
 |
 */
 
-Route::get('/', function () { return view('welcome'); });
-Route::get('/from-request-to-response', function () { return view('from-request-to-response'); });
-Route::get('/first-guide', function () { return view('first-guide'); });
-Route::get('/ioc-container', function () { return view('ioc-container'); });
-Route::get('/service-provider', function () { return view('service-provider'); });
+Route::get('/', 'Home@welcome');
+Route::get('/{page}', 'Pages@page')->where('page', '\w+(-\w+)+');
