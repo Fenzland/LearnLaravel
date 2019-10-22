@@ -156,9 +156,13 @@
 			
 			code-mirror:not(:defined)
 			{
+				display: block;
+				padding: 1em;
 				white-space: pre;
 				font-family: 'Fira Code', monospace;
 				font-size: 75%;
+				
+				background-color: hsla(0,0%,97.5%,1);
 			}
 			
 			@yield('styles')
