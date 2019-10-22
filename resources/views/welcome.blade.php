@@ -55,7 +55,7 @@
 		></li
 		><li
 			><h3>Service Provider</h3
-			><p></p
+			><p>In Laravel, we register service to container in service providers. Let's research how them works.</p
 			><p
 				><a href="/service-provider">Read more &gt;&gt;</a
 			></p

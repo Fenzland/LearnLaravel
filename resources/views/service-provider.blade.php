@@ -283,8 +283,11 @@
 			Illuminate\Notifications\NotificationServiceProvider::class,
 			Illuminate\Pagination\PaginationServiceProvider::class,
 			// may be some third-part service providers
-		</code-mirror
-		><p>You can find a example of extending this two building in this project.</p
+		@endsubindent</code-mirror
+		><p>You can find a example of extending this two building in this project. 
+		And there is another example in this project: <code>App\Providers\SubIndentBladeServiceProvider</code>, 
+		it register custom directive for Blade template engine. So we make the <code>provides()</code> returns <code>blade.compiler</code>. 
+		If the view not end with <code>.blade.php</code> this provider will not be registered (but some third-part package will break this, such as <code>facade/ignition</code>).</p
 		><p>If you are trying to modify a service provider into deferred or edit the method <code>providers(), </code>
 		don't forget to delete the cache file <code>bootstrap/cache/services.php</code>.</p
 		><p>The official documentations says the deferred service provider is for <q>only registering bindings in the service container</q>. 
