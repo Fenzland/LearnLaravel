@@ -29,6 +29,7 @@
 			code
 			{
 				font-family: 'Fira Code', monospace;
+				font-size: 0.75rem;
 			}
 			
 			a:link
@@ -142,7 +143,6 @@
 			
 			article>p code
 			{
-				font-size: 0.875rem;
 				padding: 0.125em;
 				border-radius: 0.125em;
 				
