@@ -11,7 +11,7 @@
 			readonly="readonly"
 			filename="app/Providers/AppServiceProvider.php"
 			height="16em"
-		>
+		>@subindent
 			public function boot()
 			{
 			    View::share('key', 'value');
@@ -67,7 +67,7 @@
 			    
 			    // ...
 			}
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>And if you use a package for Laravel, you may need to register some service provider class into file <code>config/app.php</code>. 
 		And over there, we can find over two dozens of service providers, include <code>App\Providers\AppServiceProvider::class</code> too. 
 		So we see, here is where we configure service providers. If we remove one from here, it will go out of business. 
@@ -76,7 +76,7 @@
 			language="PHP"
 			readonly="readonly"
 			filename="vendor/laravel/framework/src/Illuminate/Foundation/Application.php"
-		>
+		>@subindent
 			public function registerConfiguredProviders()
 			{
 			    $providers = Collection::make($this->config['app.providers'])
@@ -89,23 +89,23 @@
 			    (new ProviderRepository($this, new Filesystem, $this->getCachedServicesPath()))
 			                ->load($providers->collapse()->toArray());
 			}
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>Um, what's an unwonted unreadable function in Laravel source code! Don't worry, let's just ignore the details and see what's the result:</p
 		><code-mirror
 			language="PHP"
 			readonly="readonly"
 			filename="vendor/laravel/framework/src/Illuminate/Foundation/Application.php"
-		>
+		>@subindent
 			(new ProviderRepository($this, new Filesystem, $this->getCachedServicesPath()))
 			            ->load(dd($providers->collapse()->toArray()));
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>Do some testing, we can find what's the noodles do: move Illuminate service providers to the front of list, 
 		and insert package service providers between them and other configured service providers. Here is a readable version:</p
 		><code-mirror
 			language="PHP"
 			readonly="readonly"
 			filename="vendor/laravel/framework/src/Illuminate/Foundation/Application.php"
-		>
+		>@subindent
 			public function registerConfiguredProviders()
 			{
 			    $providers = $this->config['app.providers'];
@@ -126,13 +126,13 @@
 			
 			    $providerRepository->load($providers);
 			}
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>Next, we go to the <code>ProviderRepository::load</code>:</p
 		><code-mirror
 			language="PHP"
 			readonly="readonly"
 			filename="vendor/laravel/framework/src/Illuminate/Foundation/ProviderRepository.php"
-		>
+		>@subindent
 			// the copy of code is modified to focus on the topical
 			public function load(array $providers)
 			{
@@ -158,7 +158,7 @@
 			
 			    $this->app->addDeferredServices($deferred);
 			}
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>For normal (or eager) service providers, Laravel register it one by one. 
 		For deferred providers, Laravel collect the <code>service => provider</code> map and add to <code>$app</code>. 
 		Only when the service need be resolve, the service provider will be registered.</p
@@ -167,7 +167,7 @@
 			language="PHP"
 			readonly="readonly"
 			filename="vendor/laravel/framework/src/Illuminate/Foundation/Application.php"
-		>
+		>@subindent
 			// the copy of code is modified to focus on the topical
 			public function register($provider, $force = false)
 			{
@@ -197,13 +197,13 @@
 			
 			    return $provider;
 			}
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>They instantiate the service provider, then run method <code>register()</code>, then bind services to container, 
 		and run method <code>boot()</code> after the <code>$app</code> bootstrapped with dependency injection. So a typical service provider is like this:</p
 		><code-mirror
 			language="PHP"
 			readonly="readonly"
-		>
+		>@subindent
 			class FooServiceProvider extends ServiceProvider
 			{
 			    public $singletons = [
@@ -226,7 +226,7 @@
 			        $connection->send($hello);
 			    }
 			}
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>Declare for container in <code>$bindings</code> and <code>$singletons</code>, 
 		run static initialization on <code>register()</code>, and run non-static initialization in <code>boot()</code>.</p
 		><p>In this example, we will connect the connection for each process. That's expensive. 
@@ -234,7 +234,7 @@
 		><code-mirror
 			language="PHP"
 			readonly="readonly"
-		>
+		>@subindent
 			class FooServiceProvider extends ServiceProvider implements DeferrableProvider
 			{
 			    // ...
@@ -247,14 +247,14 @@
 			        ];
 			    }
 			}
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>Now let's back to the first code block of this article, what's a dish of noodles. 
 		We can slice them into several service providers. And make most of them deferred. Here is a example: </p
 		><code-mirror
 			language="PHP"
 			readonly="readonly"
 			filename="app/Providers/ViewSharingServiceProvider.php"
-		>
+		>@subindent
 			class ViewSharingServiceProvider extends ServiceProvider implements DeferrableProvider
 			{
 			    public function boot(\Illuminate\Contracts\View\Factory $view)
@@ -269,7 +269,7 @@
 			        ];
 			    }
 			}
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>We can use dependency injection in <code>boot()</code>, and deferred this with <code>'view'</code> service. 
 		So that this service provider will only work for web requests but not API requests. 
 		In fact, some negligent service providers will access view service even in API requests, 
@@ -279,7 +279,7 @@
 			language="PHP"
 			readonly="readonly"
 			filename="config/app.php"
-		>
+		>@subindent
 			Illuminate\Notifications\NotificationServiceProvider::class,
 			Illuminate\Pagination\PaginationServiceProvider::class,
 			// may be some third-part service providers

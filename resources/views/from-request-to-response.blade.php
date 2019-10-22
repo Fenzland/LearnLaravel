@@ -10,7 +10,7 @@
 			language="PHP"
 			readonly="readonly"
 			filename="public/index.php"
-		>
+		>@subindent
 			$kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
 			
 			$response = $kernel->handle(
@@ -18,7 +18,7 @@
 			);
 			
 			$response->send();
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>The process is simple, they make a <strong>kernel</strong>, capture the <strong>request</strong>, then handle the request with the kernel so get a <strong>response</strong>, and send the response. </p
 		><figure
 			><svg
@@ -170,19 +170,19 @@
 			language="PHP"
 			readonly="readonly"
 			filename="public/index.php"
-		>
+		>@subindent
 			$kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
-		</code-mirror
+		@endsubindent</code-mirror
 		><code-mirror
 			language="PHP"
 			readonly="readonly"
 			filename="bootstrap/app.php"
-		>
+		>@subindent
 			$app->singleton(
 			    Illuminate\Contracts\Http\Kernel::class,
 			    App\Http\Kernel::class
 			);
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>So, the <code>$kernel</code> is the singleton of class <code>App\Http\Kernel</code>. 
 		Let's check the class. Aha, you will find that here is where we manage our middlewares. 
 		But there is no <code>handle()</code>, we need search at the parent class <code>Illuminate\Foundation\Http\Kernel</code>. 
@@ -191,7 +191,7 @@
 			language="PHP"
 			readonly="readonly"
 			filename="vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php"
-		>
+		>@subindent
 			/**
 			 * Handle an incoming HTTP request.
 			 * 
@@ -199,27 +199,27 @@
 			 * @return \Illuminate\Http\Response
 			 */
 			public function handle($request)
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>Let's just skip noises and focus on the main line:</p
 		><code-mirror
 			language="PHP"
 			readonly="readonly"
 			filename="vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php"
-		>
+		>@subindent
 			$response = $this->sendRequestThroughRouter($request);
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>Let's jump to <code>sendRequestThroughRouter()</code> and focus on:</p
 		><code-mirror
 			language="PHP"
 			readonly="readonly"
 			filename="vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php"
-		>
+		>@subindent
 			// the copy of code is modified to focus on the topical
 			return (new \Illuminate\Routing\Pipeline())
 			            ->send($request)
 			            ->through($this->middleware)
 			            ->then($this->dispatchToRouter());
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>There is a magician named <code>Pipeline</code>. 
 		Do not get acquaintance with her too deep at this time, just look on what she does: 
 		sending the <code>$request</code> through the global middlewares then dispatching with router. </p
@@ -228,16 +228,16 @@
 			language="PHP"
 			readonly="readonly"
 			filename="vendor/laravel/framework/src/Illuminate/Routing/Router.php"
-		>
+		>@subindent
 			// the copy of code is modified to focus on the topical
 			$route = $this->findRoute($request);
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>With the route we find, another pipeline is here.</p
 		><code-mirror
 			language="PHP"
 			readonly="readonly"
 			filename="vendor/laravel/framework/src/Illuminate/Routing/Router.php"
-		>
+		>@subindent
 			// the copy of code is modified to focus on the topical
 			return (new \Illuminate\Routing\Pipeline())
 			            ->send($request)
@@ -247,7 +247,7 @@
 			                    $request, $route->runController()
 			                );
 			            });
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>In this pipeline, the request is sent through middlewares with the route to the controller. A response will be created with the result of controller.</p
 		><figure
 			><svg
@@ -544,7 +544,7 @@
 			language="PHP"
 			readonly="readonly"
 			filename="app/Http/Middleware/*.php"
-		>
+		>@subindent
 			public function handle($request, Closure $next)
 			{
 			    // do something with $request
@@ -555,7 +555,7 @@
 			    
 			    return $response;
 			}
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>In a middleware, we can process not only request, but also response. The full process is like this:</p
 		><figure
 			><svg
@@ -736,7 +736,7 @@
 			language="PHP"
 			readonly="readonly"
 			filename="vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php"
-		>
+		>@subindent
 			// the copy of code is modified to focus on the topical
 			try {
 			    $response = $this->sendRequestThroughRouter($request);
@@ -745,7 +745,7 @@
 			} catch (Throwable $e) {
 			    $response = $this->app[Illuminate\Contracts\Debug\ExceptionHandler::class]->render($request, $e);
 			}
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>As we see, the exception or error will be caught at the top level, out of all middlewares. 
 		And an <a>Exception Handler</a> will render it into a response. 
 		That means, on the positive hand, exception or error from middlewares can be caught, 
@@ -936,7 +936,7 @@
 			language="PHP"
 			readonly="readonly"
 			filename="app/Http/Middleware/Handler.php"
-		>
+		>@subindent
 			// the copy of code is modified to focus on the topical
 			try {
 			    $response = $next($request);
@@ -945,13 +945,13 @@
 			} catch (Throwable $e) {
 			    $response = $this->handler->render($request, $e);
 			}
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>Don't forget to register it in the <code>App\Http\Kernel</code>:</p
 		><code-mirror
 			language="PHP"
 			readonly="readonly"
 			filename="app/Http/Kernel.php"
-		>
+		>@subindent
 			protected $middleware = [
 			    // ...
 			    \App\Http\Middleware\Handler::class,
@@ -962,7 +962,7 @@
 			    \App\Http\Middleware\Handler::class,
 			    // business middlewares
 			];
-		</code-mirror
+		@endsubindent</code-mirror
 		><h3>Summing up</h3
 		><p>So far, we've learned how Laravel handle a HTTP request and respond a response. 
 		We've met several friends: HTTP Kernel, Pipeline, Router and Middleware. 

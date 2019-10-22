@@ -13,29 +13,29 @@
 			language="PHP"
 			readonly="readonly"
 			filename="vendor/laravel/framework/src/Illuminate/Contracts/Http/Kernel.php"
-		>
+		>@subindent
 			namespace Illuminate\Contracts\Http;
 			
 			interface Kernel
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>We've also find some code seems like binding a instantiable class with the interface: </p
 		><code-mirror
 			language="PHP"
 			readonly="readonly"
 			filename="bootstrap/app.php"
-		>
+		>@subindent
 			$app->singleton(
 			    Illuminate\Contracts\Http\Kernel::class,
 			    App\Http\Kernel::class
 			);
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>So is the <code>$app</code> just call <code>new</code> on this class? You can try it, an <code>ArgumentCountError</code> will be thrown. 
 		The constructor of class <code>App\Http\Kernel</code> requires 2 parameters.</p
 		><code-mirror
 			language="PHP"
 			readonly="readonly"
 			filename="vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php"
-		>
+		>@subindent
 			/**
 			 * Create a new HTTP kernel instance.
 			 *
@@ -44,14 +44,14 @@
 			 * @return void
 			 */
 			public function __construct(Application $app, Router $router)
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>For instantiating, the container need to know this. Therefore, there must be metaprogramming inside, must be reflecting inside. 
 		Let's trace the code: </p
 		><code-mirror
 			language="PHP"
 			readonly="readonly"
 			filename="vendor/laravel/framework/src/Illuminate/Container/Container.php"
-		>
+		>@subindent
 			// the copy of code is modified to focus on the topical
 			public function singleton($abstract, $concrete)
 			{
@@ -77,7 +77,7 @@
 			        return $container->resolve($concrete);
 			    };
 			}
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>We call <code>singleton()</code> on <code>bind()</code> with an <code>$abstract</code> and a concrete class. 
 		The <code>$abstract</code> is just act as a string, you can replace <code>Illuminate\Contracts\Http\Kernel::class</code> 
 		both in <code>public/index.php</code> and <code>bootstrap/app.php</code> to <code>'This is the HTTP Kernel!'</code>. 
@@ -89,7 +89,7 @@
 			language="PHP"
 			readonly="readonly"
 			filename="vendor/laravel/framework/src/Illuminate/Container/Container.php"
-		>
+		>@subindent
 			// the copy of code is modified to focus on the topical
 			public function make($abstract, array $parameters = [])
 			{
@@ -110,15 +110,15 @@
 			    if ($concrete instanceof Closure) {
 			        return $concrete($this);
 			    }
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>There are some recurrent calls, but in the very end, it will call the <code>build()</code> with the <code>$concrete</code> you first given. 
 		It end up as the code like this:</p
 		><code-mirror
 			language="PHP"
 			readonly="readonly"
-		>
+		>@subindent
 			$app->build(App\Http\Kernel::class)
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>You can modify the <code>public/index.php</code> in this way. It'll work well as well. 
 		Why don't Laravel just take this simple way? Because we may access the kernel in other places, a singleton is necessary. 
 		What's more, functions added by <code>extend()</code> will not work if we use <code>build()</code> directly instead of <code>make()</code>. 
@@ -128,7 +128,7 @@
 			language="PHP"
 			readonly="readonly"
 			filename="vendor/laravel/framework/src/Illuminate/Container/Container.php"
-		>
+		>@subindent
 			// the copy of code is modified to focus on the topical
 			public function build($concrete)
 			{
@@ -153,7 +153,7 @@
 			    
 			    $this->make($dependency->getClass()->name);
 			}
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>The metaprogramming magic is here. They reflect the class and get the dependencies from constructor. 
 		Then make the dependencies, and call the constructor with these dependencies to instantiate.  
 		If we add a class or interface as type hint of a parameter. The container will use it as the <i>Spell</i>. 
@@ -165,7 +165,7 @@
 		><code-mirror
 			language="PHP"
 			readonly="readonly"
-		>
+		>@subindent
 			class Foo
 			{
 			    public function __construct($phpInput) {}
@@ -174,14 +174,14 @@
 			$container->addContextualBinding(Foo::class, '$phpInput', fopen( 'php://input', 'r' ));
 			
 			$container->make(Foo::class);
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>Or you can use more readable syntax like the case in documentation:</p
 		><code-mirror
 			language="PHP"
 			readonly="readonly"
-		>
+		>@subindent
 			$container->when(Foo::class)->need('$phpInput')->give(fopen( 'php://input', 'r' ));
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>For readable and efficiency, we can set aliases to <i>Spells</i>. 
 		If you can use 'Ex' instead of 'Expelliarmus', Noseless Voldemort will not have enough time to call the 'Avada Kedavra'. 
 		It's a joke, but <code>app</code> for <code>Illuminate\Contracts\Foundation\Application</code>, 
@@ -189,17 +189,17 @@
 		><code-mirror
 			language="PHP"
 			readonly="readonly"
-		>
+		>@subindent
 			$app->alias(Illuminate\Contracts\Http\Kernel::class, 'http-kernel');
 			
 			$kernel = $app->make('http-kernel');
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>We also need take care of these code:</p
 		><code-mirror
 			language="PHP"
 			readonly="readonly"
 			filename="vendor/laravel/framework/src/Illuminate/Container/Container.php"
-		>
+		>@subindent
 			// the copy of code is modified to focus on the topical
 			protected function resolve($abstract)
 			{
@@ -211,14 +211,14 @@
 			
 			    return $object;
 			}
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>The object returned by <code>resolve()</code> may not be the one from <code>build()</code>. 
 		Follow the <code>getExtenders()</code>, we find: </p
 		><code-mirror
 			language="PHP"
 			readonly="readonly"
 			filename="vendor/laravel/framework/src/Illuminate/Container/Container.php"
-		>
+		>@subindent
 			// the copy of code is modified to focus on the topical
 			protected function getExtenders($abstract)
 			{
@@ -229,7 +229,7 @@
 			{
 			    $this->extenders[$abstract][] = $closure;
 			}
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>That's means we can use <code>extend()</code> to add modifiers to end up modify or change the object. 
 		If you bind with abstract and concrete class, like our kernel example, 
 		the resolve will recurrently called with both the abstract and concrete. 
@@ -237,7 +237,7 @@
 		><code-mirror
 			language="PHP"
 			readonly="readonly"
-		>
+		>@subindent
 			$app->singleton(
 			    Illuminate\Contracts\Http\Kernel::class,
 			    App\Http\Kernel::class
@@ -259,13 +259,13 @@
 			
 			$kernel->foo; // 'foo'
 			$kernel->bar; // 'bar'
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>For extendable, understandable and maintainable reason, 
 		it's better only to modify the object but not to change it in the extender.</p
 		><code-mirror
 			language="PHP"
 			readonly="readonly"
-		>
+		>@subindent
 			// Good
 			$app->extend(Foo::class, function ($foo) {
 			    $foo->doSomeExtends();
@@ -279,7 +279,7 @@
 			
 			    return $bar;
 			});
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>Now, let's talk about the IoC. IoC is short for <i>Inversion of Control</i>. 
 		It's made up with Dependence Inversion Principle (DIP) and Dependency Injection (DI). 
 		The DIP says: a module should not depend on another module, but both them should depend on abstraction. 
@@ -287,7 +287,7 @@
 		><code-mirror
 			language="PHP"
 			readonly="readonly"
-		>
+		>@subindent
 			interface Connection
 			{}
 			
@@ -305,7 +305,7 @@
 			
 			$connection = new FooConnection();
 			$app = new App($connection);
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>As we see, class <code>App</code> is not depend on class <code>FooConnection</code>, 
 		but both two classes depend on the interface <code>Connection</code>. 
 		So when we change <code>FooConnection</code> to <code>BarConnection</code>, class <code>App</code> need not be modified. 
@@ -323,14 +323,14 @@
 			language="PHP"
 			readonly="readonly"
 			filename="vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php"
-		>
+		>@subindent
 			// the copy of code is modified to focus on the topical
 			namespace Illuminate\Foundation\Http;
 			
 			class Kernel implements KernelContract
 			{
 			    public function __construct(\Illuminate\Contracts\Foundation\Application $app, \Illuminate\Routing\Router $router)
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>The <code>\Illuminate\Contracts\Foundation\Application</code> is a interface but <code>\Illuminate\Routing\Router</code> is not.
 		So this is not fully follow the DIP. So the defect is we cannot change the router freely. But we still can extends it. 
 		We can write a <code>MyRouter extends \Illuminate\Routing\Router</code>, then register it in the <code>App\Providers\RouteServiceProvider</code>:</p
@@ -338,11 +338,11 @@
 			language="PHP"
 			readonly="readonly"
 			filename="app/Providers/RouteServiceProvider.php"
-		>
+		>@subindent
 			public function boot()
 			{
 			    $this->app->singleton(\Illuminate\Routing\Router::class, MyRouter::class);
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>Now, you can make creative works in <code>MyRouter</code>. If you register <code>MyRouter</code> in <code>bootstrap/app.php</code>, 
 		you will find your routes will not work, and all request will responded with 404. That's some reason about the service providers. 
 		We will talk about this on next article. </p
@@ -352,7 +352,7 @@
 			language="PHP"
 			readonly="readonly"
 			filename="vendor/laravel/framework/src/Illuminate/Container/Container.php"
-		>
+		>@subindent
 			/**
 			 * Call the given Closure / class@method and inject its dependencies.
 			 *
@@ -375,31 +375,31 @@
 			        return $this->call($callback, $parameters);
 			    };
 			}
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>Here is some examples for <code>call()</code>: </p
 		><code-mirror
 			language="PHP"
 			readonly="readonly"
-		>
+		>@subindent
 			$container->call(function (Illuminate\Contracts\Http\Kernel $kernel) {
 				dump( $kernel );
 			});
-		</code-mirror
+		@endsubindent</code-mirror
 		><code-mirror
 			language="PHP"
 			readonly="readonly"
-		>
+		>@subindent
 			function function_name(Illuminate\Contracts\Http\Kernel $kernel)
 			{
 				dump( $kernel );
 			}
 			
 			$app->call( 'function_name' );
-		</code-mirror
+		@endsubindent</code-mirror
 		><code-mirror
 			language="PHP"
 			readonly="readonly"
-		>
+		>@subindent
 			class ClassName
 			{
 				public static function methodName(Illuminate\Contracts\Http\Kernel $kernel)
@@ -411,11 +411,11 @@
 			$app->call( [ClassName::class, 'methodName'] );
 			$app->call( 'ClassName::methodName' );
 			$app->call( 'ClassName@methodName' ); // not standard, not recommended
-		</code-mirror
+		@endsubindent</code-mirror
 		><code-mirror
 			language="PHP"
 			readonly="readonly"
-		>
+		>@subindent
 			class ClassName
 			{
 				public static function methodName(Illuminate\Contracts\Http\Kernel $kernel)
@@ -426,11 +426,11 @@
 			
 			$app->call( [ClassName::class, 'methodName'] );
 			$app->call( 'ClassName::methodName' );
-		</code-mirror
+		@endsubindent</code-mirror
 		><code-mirror
 			language="PHP"
 			readonly="readonly"
-		>
+		>@subindent
 			class ClassName
 			{
 				public function methodName(Illuminate\Contracts\Http\Kernel $kernel)
@@ -441,7 +441,7 @@
 			
 			$app->call( [new ClassName(), 'methodName'] );
 			$app->call( 'ClassName@methodName' ); // for non-static method, container will instantiate the class automatically.
-		</code-mirror
+		@endsubindent</code-mirror
 		><p>The method <code>wrap()</code> however, returns a anonymous function for calling later or higher order functions. 
 		unfortunately, the <code>wrap()</code> is not as powerful as <code>call()</code> because of a improper type hint. </p
 		><h3>Summing up</h3
